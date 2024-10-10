@@ -1,0 +1,4 @@
+stacking/node_modules
+package-lock.json
+chainstate/bitcoin-data
+chainstate/stacks-blockchain-miner-data
