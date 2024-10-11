@@ -40,6 +40,16 @@ fi
 if [ ! -f keychains/signer.yaml ]; then
     echo "Signer keychain not found. Generating and saving to keychains dir..."
     stx make_keychain -I "https://api.testnet.hiro.so" -H "https://api.testnet.hiro.so" -t | jq > keychains/signer.yaml
+
+    export STACKS_SIGNER_PRIV_KEY="$(cat keychains/signer.yaml | jq -r '.keyInfo.privateKey')"
+
+    # Render signer config toml
+    envsubst < configs/stacks-signer.toml.in > configs/stacks-signer.toml
+
+    # Request STX to stack
+    echo "Requesting STX from faucet to stack on signer address"
+    STACKS_SIGNER_STX_ADDR="$(cat keychains/signer.yaml | jq -r '.keyInfo.address')"
+    curl -X POST "https://api.testnet.hiro.so/extended/v1/faucets/stx?address=${STACKS_SIGNER_STX_ADDR}&stacking=true"
 fi
 
 echo "Starting all services"

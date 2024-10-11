@@ -1,0 +1,6 @@
+stacks_private_key = "$STACKS_SIGNER_PRIV_KEY"
+node_host = "stacks-node:20443"
+endpoint = "0.0.0.0:30000"
+network = "testnet"
+auth_password = "12345"
+db_path = "/chainstate/stacks-signer/db.sqlite"

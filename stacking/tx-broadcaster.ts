@@ -13,7 +13,6 @@ import { logger } from './common';
 const broadcastInterval = parseInt(process.env.NAKAMOTO_BLOCK_INTERVAL ?? '2');
 const url = `http://${process.env.STACKS_CORE_RPC_HOST}:${process.env.STACKS_CORE_RPC_PORT}`;
 const network = new StacksTestnet({ url });
-const EPOCH_30_START = parseInt(process.env.STACKS_30_HEIGHT ?? '0');
 
 const accounts = process.env.ACCOUNT_KEYS!.split(',').map(privKey => ({
   privKey,
@@ -65,31 +64,6 @@ async function broadcast(tx: StacksTransaction, sender?: string) {
   }
 }
 
-async function waitForNakamoto() {
-  while (true) {
-    try {
-      const poxInfo = await client.getPoxInfo();
-      if (poxInfo.current_burnchain_block_height! <= EPOCH_30_START) {
-        logger.info(
-          `Nakamoto not activated yet, waiting... (current=${poxInfo.current_burnchain_block_height}), (epoch3=${EPOCH_30_START})`
-        );
-      } else {
-        logger.info(
-          `Nakamoto activation height reached, ready to submit txs for Nakamoto block production`
-        );
-        break;
-      }
-    } catch (error) {
-      if (/(ECONNREFUSED|ENOTFOUND|SyntaxError)/.test(error.cause?.message)) {
-        logger.info(`Stacks node not ready, waiting...`);
-      } else {
-        logger.error('Error getting pox info:', error);
-      }
-    }
-    await new Promise(resolve => setTimeout(resolve, 3000));
-  }
-}
-
 function accountLabel(address: string) {
   const accountIndex = accounts.findIndex(account => account.stxAddress === address);
   if (accountIndex !== -1) {
@@ -99,7 +73,6 @@ function accountLabel(address: string) {
 }
 
 async function loop() {
-  await waitForNakamoto();
   while (true) {
     try {
       await run();

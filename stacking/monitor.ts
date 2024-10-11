@@ -2,7 +2,6 @@ import {
   accounts,
   nodeUrl,
   waitForSetup,
-  EPOCH_30_START,
   didCrossPreparePhase,
   blocksApi,
   parseEnvInt,
@@ -142,9 +141,6 @@ async function loop() {
 
     if (showBurnMsg) {
       loopLog.info('New burn block');
-      if (current_burnchain_block_height === EPOCH_30_START) {
-        loopLog.info('Starting Nakamoto');
-      }
     }
     if (showPrepareMsg) {
       loopLog.info(
@@ -166,7 +162,7 @@ async function loop() {
       }
     }
 
-    if (!showBurnMsg && showStxBlockMsg && blockInfo.burn_block_height >= EPOCH_30_START) {
+    if (!showBurnMsg && showStxBlockMsg) {
       loopLog.info({ lastStxBlockDiff: lastStxBlockDiff / 1000 }, 'Nakamoto block');
     }
     if (showStxBlockMsg && info.txs.length > 0) {
@@ -196,7 +192,7 @@ async function loop() {
       );
     }
 
-    if (reward_cycle_id >= EPOCH_30_START && !poxInfo.reward_slots) {
+    if (!poxInfo.reward_slots) {
       logger.error('FATAL: no signers while going in to Epoch 3.0');
       exit();
     }
