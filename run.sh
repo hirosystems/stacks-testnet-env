@@ -56,10 +56,10 @@ STACKS_SIGNER_STX_ADDR="$(cat keychains/signer.yaml | jq -r '.keyInfo.address')"
 STACKS_SIGNER_STX_BALANCE=$(curl -s https://api.testnet.hiro.so/extended/v1/address/${STACKS_SIGNER_STX_ADDR}/balances | jq -r '.stx.balance')
 STACKING_MIN_USTX=$(curl -s https://api.testnet.hiro.so/v2/pox | jq -r '.next_cycle.min_threshold_ustx')
 # Bump min threshold by 50% to avoid getting stuck if threshold increases
-STACKS_SIGNER_STX_THRESHOLD=$(echo "${STACKS_SIGNER_STX_BALANCE} * 1.5/1" | bc)
+STACKS_SIGNER_STX_THRESHOLD=$(echo "${STACKING_MIN_USTX} * 1.5/1" | bc)
 
 # Request STX to stack
-if [ "${STACKS_SIGNER_STX_THRESHOLD}" -le "${STACKING_MIN_USTX}" ]; then
+if [ "${STACKS_SIGNER_STX_BALANCE}" -le "${STACKS_SIGNER_STX_THRESHOLD}" ]; then
     echo "Requesting STX from faucet to stack on signer address"
     curl -X POST "https://api.testnet.hiro.so/extended/v1/faucets/stx?address=${STACKS_SIGNER_STX_ADDR}&stacking=true"
 fi
