@@ -3,12 +3,6 @@
 Easily run a Stacks miner in Kypton mode with a signer and Bitcoind testnet instance
 
 # Getting Started
-Generate a new testnet keychain via the Stacks CLI
-
-```bash
-stx make_keychain -I "https://api.testnet.hiro.so" -H "https://api.testnet.hiro.so" -t
-```
-Replace all instances of `<MINER_SEED>` in /configs/stacks-miner.toml
 
 Make sure you have Docker and Docker Compose installed and running on your machine, then run:
 
@@ -16,16 +10,26 @@ Make sure you have Docker and Docker Compose installed and running on your machi
 ./run.sh
 ```
 
+This will generate a new set of miner and signer STX/BTC keys if needed, generate miner and signer configs, check the balances of all relevant addresses, assist in funding them if needed, and start all services.
+
 This will output the logs from each service. You can view the logs for a single service with:
 
 ```
-docker-compose logs $service_name
+docker-compose logs <SERVICE NAME>
 ```
 
 Add `-f` to automatically follow new logs. The service names can be found in [./docker-compose.yml](./docker-compose.yml), such as `stacks-node`, `signer`, and `monitor`.
 
 ### Shutdown
 
-```shell
+```bash
 ./stop.sh
+```
+
+### Reset
+
+Warning: Running this script will wipe all local chainstate data, requiring you to re-sync your bitcoin and stacks nodes to chaintip the next time they're booted up.
+
+```bash
+./reset.sh
 ```
