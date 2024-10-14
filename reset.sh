@@ -7,5 +7,7 @@ if [ "${response}" == "Y" ]; then
     docker compose down --volumes --remove-orphans --timeout=1 --rmi=all
 
     echo "Deleting chainstate contents"
-    rm -rf chainstate/*
+    rm -rf chainstate/bitcoin/* chainstate/bitcoin/.*
+    rm -rf chainstate/stacks-miner/* chainstate/stacks-miner/.*
+    rm -rf chainstate/stacks-signer/* chainstate/stacks-signer/.*
 fi

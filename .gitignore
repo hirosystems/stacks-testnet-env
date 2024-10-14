@@ -1,7 +1,10 @@
 stacking/node_modules
 package-lock.json
-chainstate/bitcoin
-chainstate/stacks-miner
-chainstate/stacks-signer
+chainstate/bitcoin/*
+!chainstate/bitcoin/.gitkeep
+chainstate/stacks-miner/*
+!chainstate/stacks-miner/.gitkeep
+chainstate/stacks-signer/*
+!chainstate/stacks-signer/.gitkeep
 configs/*.toml
 keychains/*.yaml

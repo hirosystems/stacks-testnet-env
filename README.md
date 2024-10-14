@@ -4,7 +4,11 @@ Easily run a Stacks miner in Kypton mode with a signer and Bitcoind testnet inst
 
 # Getting Started
 
-Make sure you have Docker and Docker Compose installed and running on your machine, then run:
+1. Make sure you have Docker and Docker Compose installed and running on your machine.
+1. If you already have a generated keychain for the miner and/or the signer, place them in the `keychains` dir in separate YAML files named `miner.yaml` and `signer.yaml`.
+1. If you already have chainstate data for bitcoind, stacks core, or the stacks signer, place them in their respective dirs within `chainstate`.
+
+Then run:
 
 ```bash
 ./run.sh
