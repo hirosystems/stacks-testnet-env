@@ -1,7 +1,6 @@
-version: "3.9"
-
 x-common-vars:
   - &STACKING_CYCLES ${STACKING_CYCLES:-1} # number of cycles to stack-stx or stack-extend for
+  - &STACKING_KEYS ${STACKING_KEYS:-""} # number of cycles to stack-stx or stack-extend for
   - &EXIT_FROM_MONITOR 1 # set to "1" to automatically shut down via monitor.ts
 
 services:
@@ -43,38 +42,39 @@ services:
       - --config
       - /app/config.toml
 
-  # stacks-signer:
-  #   networks:
-  #     - stacks
-  #   image: blockstack/stacks-core:3.0.0.0.0-rc3
-  #   restart: unless-stopped
-  #   depends_on:
-  #     - stacks-node
-  #   volumes:
-  #     - ./signer.toml:/root/config.toml.in
-  #     - chainstate:/chainstate
-  #   entrypoint:
-  #     - /bin/bash
-  #     - -c
-  #     - |
-  #       set -e
-  #       envsubst < config.toml.in > config.toml
-  #       exec stacks-signer run --config config.toml
+  stacks-signer:
+    networks:
+      - stacks
+    image: blockstack/stacks-core:3.0.0.0.0-rc3
+    restart: unless-stopped
+    depends_on:
+      - stacks-node
+    volumes:
+      - ./configs/stacks-signer.toml/:/app/config.toml
+      - ./chainstate:/chainstate
+    command:
+      - /bin/stacks-signer
+      - run
+      - --config
+      - /app/config.toml
 
-  # stacker:
-  #   networks:
-  #     - stacks
-  #   image: blockstack/stacks-core:3.0.0.0.0-rc3
-  #   restart: unless-stopped
-  #   environment:
-  #     STACKS_CORE_RPC_HOST: stacks-node
-  #     STACKS_CORE_RPC_PORT: 20443
-  #     STACKING_CYCLES: *STACKING_CYCLES
-  #     STACKING_INTERVAL: 2 # interval (seconds) for checking if stacking transactions are needed
-  #     POST_TX_WAIT: 10 # seconds to wait after a stacking transaction broadcast before continuing the loop
-  #     SERVICE_NAME: stacker
-  #   depends_on:
-  #     - stacks-node
+  stacker:
+    networks:
+      - stacks
+    build:
+      context: .
+      dockerfile: dockerfiles/Dockerfile.stacker
+    restart: unless-stopped
+    environment:
+      STACKS_CORE_RPC_HOST: stacks-node
+      STACKS_CORE_RPC_PORT: 20443
+      STACKING_CYCLES: *STACKING_CYCLES
+      STACKING_INTERVAL: 2 # interval (seconds) for checking if stacking transactions are needed
+      STACKING_KEYS: *STACKING_KEYS
+      POST_TX_WAIT: 10 # seconds to wait after a stacking transaction broadcast before continuing the loop
+      SERVICE_NAME: stacker
+    depends_on:
+      - stacks-node
 
   # monitor:
   #   networks:
@@ -86,6 +86,7 @@ services:
   #     STACKS_CORE_RPC_HOST: stacks-api
   #     STACKS_CORE_RPC_PORT: 3999
   #     STACKING_CYCLES: *STACKING_CYCLES
+  #     STACKING_KEYS: *STACKING_KEYS
   #     EXIT_FROM_MONITOR: *EXIT_FROM_MONITOR
   #     SERVICE_NAME: monitor
   #   depends_on:
