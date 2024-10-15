@@ -31,11 +31,11 @@ if [ "${BITCOIN_WALLET_NAME}" != "stacks-miner-wallet" ]; then
     docker exec -t stacks-testnet-env-bitcoind-1 bitcoin-cli -regtest -rpcwait -rpcuser=btc -rpcpassword=btc -named createwallet wallet_name="stacks-miner-wallet" descriptors=false load_on_startup=true
     docker exec -t stacks-testnet-env-bitcoind-1 bitcoin-cli -regtest -rpcwait -rpcuser=btc -rpcpassword=btc -named -rpcwallet=stacks-miner-wallet importaddress address="${STACKS_MINER_BTC_ADDR}"
 fi
-AVAILABLE_BTC=$(docker exec -t stacks-testnet-env-bitcoind-1 bitcoin-cli -regtest -rpcuser=btc -rpcpassword=btc getbalances | jq -r '.watchonly.trusted' + .watchonly.untrusted_pending)
+AVAILABLE_BTC=$(docker exec -t stacks-testnet-env-bitcoind-1 bitcoin-cli -regtest -rpcuser=btc -rpcpassword=btc getbalances | jq -r '.watchonly.trusted + .watchonly.untrusted_pending')
 
 # Check for funds
 # TODO: once Hiro's API BTC faucet is working, incorporate it into script
-if [ ${AVAILABLE_BTC} -eq 0 ]; then
+if [ ${AVAILABLE_BTC} == "0" ]; then
     echo "Not enough funds in BTC address ${STACKS_MINER_BTC_ADDR}"
     echo "Rerun this script once it has some funds"
     exit 1
