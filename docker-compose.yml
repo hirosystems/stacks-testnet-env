@@ -23,7 +23,7 @@ services:
   stacks-node:
     networks:
       - stacks
-    image: blockstack/stacks-core:3.0.0.0.0-rc4
+    image: blockstack/stacks-core:3.0.0.0.0-rc5
     restart: unless-stopped
     depends_on:
       - bitcoind
@@ -45,7 +45,7 @@ services:
   stacks-signer:
     networks:
       - stacks
-    image: blockstack/stacks-core:3.0.0.0.0-rc4
+    image: blockstack/stacks-core:3.0.0.0.0-rc5
     restart: unless-stopped
     depends_on:
       - stacks-node
